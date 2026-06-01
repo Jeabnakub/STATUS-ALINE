@@ -263,11 +263,15 @@
         <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center shrink-0 shadow-sm">
          <i data-lucide="info" class="w-4.5 h-4.5 text-teal-700"></i>
         </div>
-        <div>
-         <h3 class="text-sm font-semibold text-gray-800 mb-0.5">พร้อมสำหรับดำเนินการ</h3>
-         <p class="text-xs text-gray-500 leading-relaxed">กรุณาระบุเลขประจำตัวคนต่างด้าว หรือ เลขนายจ้าง เพื่อเรียกดูข้อมูลจากระบบฐานข้อมูลฐานข้อมูลกลาง</p>
-        </div>
-       </div>
+        <div id="initial-state" class="bounce-in rounded-xl border border-teal-500/20 p-4 flex items-center gap-3.5 bg-gradient-to-r from-teal-50/40 via-white to-blue-50/30 card-shadow">
+ <div class="w-8 h-8 rounded-full bg-white border border-teal-200 shadow-sm flex items-center justify-center shrink-0 animate-pulse">
+  <i data-lucide="info" class="w-4 h-4 text-teal-600"></i>
+ </div>
+ <div class="flex-1">
+  <h3 class="text-xs font-bold text-teal-950">เชื่อมต่อฐานข้อมูลกลางแล้ว</h3>
+  <p class="text-[11px] text-teal-800/70 leading-normal mt-0.5">โปรดใส่เลข 13 หลักในช่องค้นหาด้านบนเพื่อเริ่มต้น</p>
+ </div>
+</div>
        
        <div id="loading-state" class="bounce-in hidden rounded-[16px] border border-teal-200 p-4.5 items-center gap-3.5 transition-all duration-200 card-shadow bg-white">
         <div class="loader"></div>
