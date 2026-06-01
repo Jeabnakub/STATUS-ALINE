@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="th">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบตรวจสอบข้อมูลคนต่างด้าว</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --surface: #ffffff;
+      --surface-soft: #f9f9fb;
+      --text: #1d1d1f;
+      --muted: #6f737f;
+      --line: #d5d5d7;
+      --green: #34c759;
+      --green-dark: #30b454;
+      --green-soft: #f0fdf4;
+      --green-soft-2: #dcfce7;
+      --blue: #0071e3;
+      --blue-light: #0a84ff;
+      --blue-soft: #f0f6ff;
+      --blue-soft-2: #e5f0ff;
+      --gray-1: #f5f5f7;
+      --gray-2: #ebebf0;
+      --gray-3: #d5d5d7;
+      --warning: #ff9500;
+      --warning-bg: #fff8f0;
+      --danger: #ff3b30;
+      --danger-bg: #fff4f2;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      width: 100%;
+      font-family: 'Sarabun', sans-serif;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .app-bg {
+      background:
+        radial-gradient(circle at top left, rgba(52, 199, 89, 0.08), transparent 35%),
+        radial-gradient(circle at top right, rgba(0, 113, 227, 0.08), transparent 36%),
+        linear-gradient(180deg, #ffffff 0%, #f5f5f7 50%, #ebebf0 100%);
+    }
+
+    .glass-header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1.5px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-shadow {
+      box-shadow: var(--shadow-md);
+      transition: transform .28s ease, box-shadow .28s ease;
+    }
+
+    .card-shadow:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .focus-ring:focus {
+      outline: 3px solid rgba(47,143,107,.18);
+      outline-offset: 3px;
+    }
+
+    .fade-up {
+      animation: fadeUp .55s ease both;
+    }
+
+    .fade-up-delay {
+      animation: fadeUp .55s ease .1s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); filter: blur(3px); }
+      to { opacity: 1; transform: translateY(0); filter: blur(0); }
+    }
+
+    .loader {
+      width: 24px;
+      height: 24px;
+      border: 2.5px solid rgba(37,99,235,.16);
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .glow-pulse {
+      animation: glowPulse 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        filter: drop-shadow(0 0 4px rgba(0, 113, 227, 0.25)) drop-shadow(0 0 8px rgba(0, 113, 227, 0.1));
+      }
+      50% {
+        filter: drop-shadow(0 0 12px rgba(0, 113, 227, 0.4)) drop-shadow(0 0 20px rgba(0, 113, 227, 0.2));
+      }
+    }
+
+    .bounce-in {
+      animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.3) translateY(20px);
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .spin-icon {
+      display: inline-block;
+      animation: spinIcon 2s linear infinite;
+    }
+
+    @keyframes spinIcon {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .status-pulse {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: statusPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+      }
+    }
+
+    .status-text {
+      animation: typewriter 4s steps(10, end) infinite;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid currentColor;
+      padding-right: 4px;
+    }
+
+    @keyframes typewriter {
+      0% {
+        width: 0;
+      }
+      70% {
+        width: 100%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    .result-row {
+      animation: rowIn .38s ease backwards;
+      transition: background-color .2s ease;
+    }
+
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    .result-row:hover {
+      background-color: #f0f7fd !important;
+    }
+
+    .app-input::placeholder { color: #95a19c; }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body data-template-id="__page-root" class="app-bg min-h-screen w-full">
+  <div class="w-full min-h-screen">
+   <header data-template-id="header-band" class="canva-header glass-header w-full">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-5 sm:py-6">
+     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-start gap-4">
+       <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-green-50 to-blue-50 border-2 border-green-500 flex items-center justify-center shrink-0">
+        <i data-lucide="shield-check" class="w-6 h-6 text-green-600"></i>
+       </div>
+       <div>
+        <h1 data-template-id="main-title" class="canva-text leading-tight"></h1>
+        <p data-template-id="main-subtitle" class="canva-text mt-2 max-w-2xl leading-relaxed"></p>
+       </div>
+      </div>
+      <div data-template-id="system-badge" class="canva-tag self-start md:self-center inline-flex items-center gap-2 rounded-full px-6 py-2 border-2 border-green-500 bg-green-50 whitespace-nowrap">
+       <span class="status-pulse"></span> <span data-template-id="system-badge-text" class="canva-text status-text"></span>
+      </div>
+     </div>
+    </div>
+   </header>
+   <main class="w-full">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8 py-7 sm:py-10">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl mx-auto">
+      <section data-template-id="id-search-panel" class="canva-panel fade-up bounce-in rounded-[28px] border-2 border-green-400 overflow-hidden card-shadow">
+       <div class="p-5 sm:p-6 lg:p-8 bg-gradient-to-br from-white via-green-50 to-blue-50">
+        <div class="flex items-start gap-3 mb-5">
+         <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center shrink-0 shadow-sm">
+          <i data-lucide="id-card" class="w-5 h-5 text-green-600 spin-icon"></i>
+         </div>
+         <div>
+          <h2 data-template-id="id-search-heading" class="canva-text"></h2>
+         </div>
+        </div>
+        <p data-template-id="id-search-description" class="canva-text leading-relaxed max-w-2xl mb-6"></p>
+        <form id="id-lookup-form" class="space-y-4" novalidate>
+         <div>
+          <label data-template-id="id-label" class="canva-text block mb-2" for="alien-id"></label>
+          <div class="relative">
+           <input data-template-id="id-input" id="alien-id" type="text" inputmode="numeric" maxlength="13" autocomplete="off" class="canva-input app-input focus-ring w-full rounded-2xl border-1.5 border-green-300 bg-white px-4 py-4 pr-12 text-[17px] tracking-[0.08em] text-[#1f2a27] transition-all duration-200 focus:bg-green-50 focus:border-green-500 focus:shadow-md">
+           <div class="absolute inset-y-0 right-4 flex items-center text-green-600">
+            <i data-lucide="id-card" class="w-5 h-5"></i>
+           </div>
+          </div>
+          <p id="id-input-error" class="hidden mt-2 text-sm text-[#b4534b]"></p>
+         </div>
+         <div class="flex flex-col gap-3 pt-1">
+          <button data-template-id="id-search-button" id="id-search-button" type="submit" class="canva-button focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0 shadow-md hover:shadow-lg bg-gradient-to-br from-green-600 to-green-700 text-white"> <i data-lucide="search" class="w-5 h-5"></i> <span data-template-id="id-search-button-text" class="canva-text"></span> </button> <button data-template-id="id-clear-button" id="id-clear-button" type="button" class="canva-button focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] shadow-sm hover:shadow-md"> <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span data-template-id="id-clear-button-text" class="canva-text"></span> </button>
+         </div>
+        </form>
+       </div>
+      </section>
+      <section data-template-id="employer-search-panel" class="canva-panel fade-up bounce-in rounded-[28px] border-2 border-blue-500 overflow-hidden card-shadow">
+       <div class="p-5 sm:p-6 lg:p-8 bg-gradient-to-br from-white via-blue-50 to-gray-100">
+        <div class="flex items-start gap-3 mb-5">
+         <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-blue-100 to-gray-100 flex items-center justify-center shrink-0 shadow-sm">
+          <i data-lucide="briefcase-business" class="w-5 h-5 text-blue-600 spin-icon"></i>
+         </div>
+         <div>
+          <h2 data-template-id="employer-search-heading" class="canva-text"></h2>
+         </div>
+        </div>
+        <p data-template-id="employer-search-description" class="canva-text leading-relaxed max-w-2xl mb-6"></p>
+        <form id="employer-lookup-form" class="space-y-4" novalidate>
+         <div>
+          <label data-template-id="employer-label" class="canva-text block mb-2" for="employer-number"></label>
+          <div class="relative">
+           <input data-template-id="employer-input" id="employer-number" type="text" inputmode="numeric" maxlength="13" autocomplete="off" class="canva-input app-input focus-ring w-full rounded-2xl border-1.5 border-blue-300 bg-white px-4 py-4 pr-12 text-[17px] tracking-[0.08em] text-[#1f2a27] transition-all duration-200 focus:bg-blue-50 focus:border-blue-500 focus:shadow-md">
+           <div class="absolute inset-y-0 right-4 flex items-center text-blue-600">
+            <i data-lucide="briefcase-business" class="w-5 h-5"></i>
+           </div>
+          </div>
+          <p id="employer-input-error" class="hidden mt-2 text-sm text-[#b4534b]"></p>
+         </div>
+         <div class="flex flex-col gap-3 pt-1">
+          <button data-template-id="employer-search-button" id="employer-search-button" type="submit" class="canva-button focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0 shadow-md hover:shadow-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white"> <i data-lucide="search" class="w-5 h-5"></i> <span data-template-id="employer-search-button-text" class="canva-text"></span> </button> <button data-template-id="employer-clear-button" id="employer-clear-button" type="button" class="canva-button focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] shadow-sm hover:shadow-md"> <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span data-template-id="employer-clear-button-text" class="canva-text"></span> </button>
+         </div>
+        </form>
+       </div>
+      </section>
+     </div>
+     <div class="flex justify-center">
+      <section class="mt-5 fade-up-delay w-full max-w-5xl" aria-live="polite">
+       <div id="initial-state" data-template-id="initial-state-card" class="canva-card bounce-in rounded-[24px] border-2 border-green-300 p-5 sm:p-6 flex items-start gap-4 transition-all duration-200 card-shadow">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-teal-100 to-cyan-100 flex items-center justify-center shrink-0 shadow-sm">
+         <i data-lucide="info" class="w-5 h-5 text-teal-700"></i>
+        </div>
+        <div>
+         <h3 data-template-id="initial-title" class="canva-text mb-1"></h3>
+         <p data-template-id="initial-description" class="canva-text leading-relaxed"></p>
+        </div>
+       </div>
+       <div id="loading-state" data-template-id="loading-state-card" class="canva-card bounce-in hidden rounded-[24px] border border-teal-200 p-5 sm:p-6 items-center gap-4 transition-all duration-200 card-shadow">
+        <div class="loader"></div>
+        <div>
+         <h3 data-template-id="loading-title" class="canva-text mb-1"></h3>
+         <p data-template-id="loading-description" class="canva-text leading-relaxed"></p>
+        </div>
+       </div>
+       <div id="not-found-state" data-template-id="not-found-card" class="canva-card bounce-in hidden rounded-[24px] border border-[#eadfc9] p-5 sm:p-6 items-start gap-4 transition-all duration-200 card-shadow">
+        <div class="w-11 h-11 rounded-2xl bg-[#f4ead8] flex items-center justify-center shrink-0 shadow-sm">
+         <i data-lucide="search-x" class="w-5 h-5 text-[#9a6b2e]"></i>
+        </div>
+        <div>
+         <h3 data-template-id="not-found-title" class="canva-text mb-1"></h3>
+         <p data-template-id="not-found-description" class="canva-text leading-relaxed"></p>
+        </div>
+       </div>
+       <div id="error-state" data-template-id="error-card" class="canva-card bounce-in hidden rounded-[24px] border border-[#ecd8d5] p-5 sm:p-6 items-start gap-4 transition-all duration-200 card-shadow">
+        <div class="w-11 h-11 rounded-2xl bg-[#f6e5e2] flex items-center justify-center shrink-0 shadow-sm">
+         <i data-lucide="circle-alert" class="w-5 h-5 text-[#b4534b]"></i>
+        </div>
+        <div>
+         <h3 data-template-id="error-title" class="canva-text mb-1"></h3>
+         <p data-template-id="error-description" class="canva-text leading-relaxed"></p>
+        </div>
+       </div>
+       <div id="result-state" data-template-id="result-card" class="canva-card bounce-in hidden rounded-[24px] overflow-hidden border border-teal-200 bg-white card-shadow w-full">
+        <div data-template-id="result-header" class="canva-section px-5 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b-2 border-teal-300">
+         <div>
+          <h2 data-template-id="result-heading" class="canva-text text-teal-800"></h2>
+         </div>
+         <div data-template-id="result-status" class="canva-tag inline-flex items-center gap-2 rounded-full px-3 py-1.5 self-start sm:self-center border border-teal-300 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-teal-600"></span> <span data-template-id="result-status-text" class="canva-text"></span>
+         </div>
+        </div>
+        <div id="result-fields" class="px-5 sm:px-6 py-1 bg-white w-full"></div>
+        <div id="employer-result-table" class="hidden px-0 py-0 bg-white overflow-x-auto w-full"></div>
+       </div>
+      </section>
+     </div>
+     <footer class="py-5">
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+       <p data-template-id="current-datetime" class="canva-text text-center text-sm"></p>
+      </div>
+      <p data-template-id="footer-note" class="canva-text text-center leading-relaxed"></p>
+     </footer>
+    </div>
+   </main>
+  </div>
+  <template id="result-row-template">
+   <div data-template-id="result-row" class="canva-list result-row grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-1 sm:gap-4 py-3 border-b border-teal-100 transition-all duration-150">
+    <div data-template-id="result-label" class="canva-text text-sm"></div>
+    <div data-template-id="result-value" class="canva-text font-medium break-words"></div>
+   </div>
+  </template>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    const alienIdInput = document.getElementById('alien-id');
+    const employerInput = document.getElementById('employer-number');
+    const idInputError = document.getElementById('id-input-error');
+    const employerInputError = document.getElementById('employer-input-error');
+    const idForm = document.getElementById('id-lookup-form');
+    const employerForm = document.getElementById('employer-lookup-form');
+    const idSearchButton = document.getElementById('id-search-button');
+    const idClearButton = document.getElementById('id-clear-button');
+    const employerSearchButton = document.getElementById('employer-search-button');
+    const employerClearButton = document.getElementById('employer-clear-button');
+
+    const initialState = document.getElementById('initial-state');
+    const loadingState = document.getElementById('loading-state');
+    const notFoundState = document.getElementById('not-found-state');
+    const errorState = document.getElementById('error-state');
+    const resultState = document.getElementById('result-state');
+    const resultFields = document.getElementById('result-fields');
+    const employerResultTable = document.getElementById('employer-result-table');
+
+    let activeSearchType = null;
+
+    const SHEET_ID = '1Wj-PUpYmZ7BROgUlfLpxrg83m5_zGNQ7V19MRoBOH7I';
+    const GID = '1351239890';
+    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+    function clearIdErrors() {
+      idInputError.classList.add('hidden');
+      idInputError.textContent = '';
+    }
+
+    function clearEmployerErrors() {
+      employerInputError.classList.add('hidden');
+      employerInputError.textContent = '';
+    }
+
+    function showBlockMessage(inputError, searchType) {
+      const otherType = searchType === 'id' ? 'เลขนายจ้าง' : 'เลขแรงงาน';
+      inputError.textContent = `กำลังค้นหาด้วย${otherType}อยู่ โปรดกดล้างก่อนเปลี่ยนประเภทการค้นหา`;
+      inputError.classList.remove('hidden');
+    }
+
+    function formatThaiDateTime() {
+      const now = new Date();
+      const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+      const day = now.getDate();
+      const month = thaiMonths[now.getMonth()];
+      const year = now.getFullYear() + 543;
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${day} ${month} ${year}, ${hours}:${minutes}:${seconds} น.`;
+    }
+
+    const datetimeEl = document.querySelector('[data-template-id="current-datetime"]');
+    if (datetimeEl) {
+      datetimeEl.textContent = formatThaiDateTime();
+      setInterval(() => datetimeEl.textContent = formatThaiDateTime(), 1000);
+    }
+
+    lucide.createIcons();
+
+    function showState(stateName) {
+      const states = {
+        initial: initialState,
+        loading: loadingState,
+        notFound: notFoundState,
+        error: errorState,
+        result: resultState
+      };
+
+      Object.values(states).forEach(el => {
+        el.classList.add('hidden');
+        el.classList.remove('flex', 'bounce-in');
+      });
+
+      const target = states[stateName];
+      target.classList.remove('hidden');
+      target.classList.add('bounce-in');
+
+      if (stateName !== 'result') {
+        target.classList.add('flex');
+        resultFields.innerHTML = '';
+        resultFields.classList.add('hidden');
+        employerResultTable.innerHTML = '';
+        employerResultTable.classList.add('hidden');
+      }
+    }
+
+    function setLoading(isLoading, buttonElement) {
+      buttonElement.disabled = isLoading;
+      buttonElement.classList.toggle('opacity-70', isLoading);
+    }
+
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let current = '';
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const next = text[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          row.push(current);
+          current = '';
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && next === '\n') i++;
+          row.push(current);
+          if (row.some(cell => cell.trim() !== '')) rows.push(row);
+          row = [];
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+
+      if (current.length || row.length) {
+        row.push(current);
+        if (row.some(cell => cell.trim() !== '')) rows.push(row);
+      }
+
+      return rows;
+    }
+
+    function normalizeId(value) {
+      return String(value || '').replace(/\D/g, '');
+    }
+
+    function clearResults() {
+      resultFields.innerHTML = '';
+      employerResultTable.innerHTML = '';
+    }
+
+    function isHighlightField(label) {
+      const keys = ['ชื่อ', 'name', 'status', 'สถานะ', 'passport', 'หนังสือเดินทาง'];
+      const lower = (label || '').toLowerCase();
+      return keys.some(key => lower.includes(key.toLowerCase()));
+    }
+
+    function formatThaiDate(dateString) {
+      if (!dateString || dateString.trim() === '') return '-';
+      try {
+        const thaiMonths = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+        const slashMatch = dateString.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s*,\s*\d{1,2}:\d{2}:\d{2})?$/);
+        if (slashMatch) {
+          const day = parseInt(slashMatch[1], 10);
+          const month = parseInt(slashMatch[2], 10) - 1;
+          const year = parseInt(slashMatch[3], 10);
+          if (month < 0 || month > 11 || day < 1 || day > 31) return dateString;
+          return `${day} ${thaiMonths[month]} ${year + 543}`;
+        }
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        return `${date.getDate()} ${thaiMonths[date.getMonth()]} ${date.getFullYear() + 543}`;
+      } catch {
+        return dateString;
+      }
+    }
+
+    function renderResult(headers, row) {
+      clearResults();
+      resultFields.classList.remove('hidden');
+
+      headers.forEach((header, index) => {
+        const template = document.getElementById('result-row-template');
+        const clone = template.content.cloneNode(true);
+        const label = clone.querySelector('[data-template-id="result-label"]');
+        const value = clone.querySelector('[data-template-id="result-value"]');
+        const rowDiv = clone.querySelector('[data-template-id="result-row"]');
+
+        const labelText = header && header.trim() ? header.trim() : `ข้อมูล ${index + 1}`;
+        let valueText = row[index] && row[index].trim() ? row[index].trim() : '-';
+
+        if (labelText.toLowerCase().includes('date') || labelText.toLowerCase().includes('วันที่') || labelText.toLowerCase().includes('เวลา')) {
+          valueText = formatThaiDate(valueText);
+        }
+
+        label.textContent = labelText;
+        value.textContent = valueText;
+        rowDiv.style.animationDelay = `${index * 0.05}s`;
+
+        // Only highlight "ผลการดำเนินการ" or similar with red text and background
+        if (labelText.toLowerCase().includes('ผลการดำเนินการ') || labelText.toLowerCase().includes('result') || labelText.toLowerCase().includes('status')) {
+          rowDiv.classList.add('bg-[#f8fbf9]');
+          value.classList.add('font-bold', 'text-red-600');
+        } else {
+          value.classList.add('text-black');
+        }
+
+        resultFields.appendChild(clone);
+      });
+    }
+
+    function renderEmployerResultTable(headers, rows) {
+      clearResults();
+      employerResultTable.classList.remove('hidden');
+
+      const table = document.createElement('table');
+      table.className = 'w-full border-collapse';
+
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      headerRow.className = 'bg-[#eef7f2]';
+
+      headers.forEach((header, index) => {
+        const th = document.createElement('th');
+        th.className = 'text-left px-4 sm:px-5 py-4 text-sm font-bold text-[#285542] border-b border-[#d6e8df] whitespace-nowrap';
+        th.textContent = header && header.trim() ? header.trim() : `ข้อมูล ${index + 1}`;
+        headerRow.appendChild(th);
+      });
+
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+
+      rows.forEach((row, rowIndex) => {
+        const tr = document.createElement('tr');
+        tr.className = `result-row border-b border-[#e4eee8] ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-[#fbfdfc]'}`;
+        tr.style.animationDelay = `${rowIndex * 0.05}s`;
+
+        row.forEach((cell, cellIndex) => {
+          const td = document.createElement('td');
+          let cellText = cell && cell.trim() ? cell.trim() : '-';
+          const headerLabel = headers[cellIndex] || '';
+
+          if (headerLabel.toLowerCase().includes('date') || headerLabel.toLowerCase().includes('วันที่') || headerLabel.toLowerCase().includes('เวลา')) {
+            cellText = formatThaiDate(cellText);
+          }
+
+          td.className = 'px-4 sm:px-5 py-4 text-sm whitespace-nowrap';
+          td.textContent = cellText;
+
+          if (isHighlightField(headerLabel)) {
+            td.classList.add('font-semibold', 'text-[#1f2a27]');
+          } else {
+            td.classList.add('text-[#66736e]');
+          }
+
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      table.appendChild(tbody);
+      employerResultTable.appendChild(table);
+    }
+
+    async function lookupRecord(idNumber) {
+      showState('loading');
+      setLoading(true, idSearchButton);
+
+      try {
+        const response = await fetch(CSV_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Unable to fetch sheet');
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+        if (!rows || rows.length < 2) throw new Error('No data');
+
+        const headers = rows[0];
+        const records = rows.slice(1);
+        const matched = records.find(row => normalizeId(row[4]) === idNumber);
+
+        if (!matched) {
+          showState('notFound');
+          return;
+        }
+
+        renderResult(headers, matched);
+        showState('result');
+      } catch {
+        showState('error');
+      } finally {
+        setLoading(false, idSearchButton);
+      }
+    }
+
+    async function lookupByEmployer(employerNumber) {
+      showState('loading');
+      setLoading(true, employerSearchButton);
+
+      try {
+        const response = await fetch(CSV_URL, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Unable to fetch sheet');
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+        if (!rows || rows.length < 2) throw new Error('No data');
+
+        const headers = rows[0];
+        const records = rows.slice(1);
+        const matchedRecords = records.filter(row => normalizeId(row[2] || '') === employerNumber);
+
+        if (!matchedRecords.length) {
+          showState('notFound');
+          return;
+        }
+
+        renderEmployerResultTable(headers, matchedRecords);
+        showState('result');
+      } catch {
+        showState('error');
+      } finally {
+        setLoading(false, employerSearchButton);
+      }
+    }
+
+    alienIdInput.addEventListener('input', () => {
+      alienIdInput.value = alienIdInput.value.replace(/\D/g, '').slice(0, 13);
+      if (!idInputError.classList.contains('hidden')) clearIdErrors();
+    });
+
+    employerInput.addEventListener('input', () => {
+      employerInput.value = employerInput.value.replace(/\D/g, '').slice(0, 13);
+      if (!employerInputError.classList.contains('hidden')) clearEmployerErrors();
+    });
+
+    idForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (activeSearchType === 'employer') {
+        showBlockMessage(idInputError, 'id');
+        alienIdInput.focus();
+        return;
+      }
+
+      const idNumber = normalizeId(alienIdInput.value);
+
+      if (idNumber.length !== 13) {
+        idInputError.textContent = 'กรุณากรอกเลขประจำตัวคนต่างด้าวให้ครบ 13 หลัก';
+        idInputError.classList.remove('hidden');
+        alienIdInput.focus();
+        return;
+      }
+
+      clearIdErrors();
+      activeSearchType = 'id';
+      lookupRecord(idNumber);
+    });
+
+    employerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      if (activeSearchType === 'id') {
+        showBlockMessage(employerInputError, 'employer');
+        employerInput.focus();
+        return;
+      }
+
+      const employerNumber = normalizeId(employerInput.value);
+
+      if (employerNumber.length !== 13) {
+        employerInputError.textContent = 'กรุณากรอกเลขนายจ้างให้ครบ 13 หลัก';
+        employerInputError.classList.remove('hidden');
+        employerInput.focus();
+        return;
+      }
+
+      clearEmployerErrors();
+      activeSearchType = 'employer';
+      lookupByEmployer(employerNumber);
+    });
+
+    idClearButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      alienIdInput.value = '';
+      clearIdErrors();
+      clearResults();
+      activeSearchType = null;
+      showState('initial');
+      alienIdInput.focus();
+    });
+
+    employerClearButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      employerInput.value = '';
+      clearEmployerErrors();
+      clearResults();
+      activeSearchType = null;
+      showState('initial');
+      employerInput.focus();
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a04b6311ee28fe08',t:'MTc4MDI4NzIxOQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
