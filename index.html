@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบตรวจสอบข้อมูลคนต่างด้าว</title>
+  <title>ระบบตรวจสอบผลการดำเนินการ ระบบแจ้งเพิ่มข้อมูลแรงงานต่างด้าวในระบบ eWorkPermit</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -173,12 +173,12 @@
         <i data-lucide="shield-check" class="w-6 h-6 text-green-600"></i>
        </div>
        <div>
-        <h1 class="text-2xl font-bold leading-tight text-gray-900">ระบบตรวจสอบข้อมูลคนต่างด้าว</h1>
-        <p class="mt-1 max-w-2xl text-gray-600 text-sm leading-relaxed">ค้นหาประวัติแรงงานและข้อมูลสถานประกอบการจากฐานข้อมูลส่วนกลาง</p>
+        <h1 class="text-2xl font-bold leading-tight text-gray-900">ระบบตรวจสอบผลการดำเนินการ ระบบแจ้งเพิ่มข้อมูลแรงงานต่างด้าวในระบบ eWorkPermit</h1>
+        <p class="mt-1 max-w-2xl text-gray-600 text-sm leading-relaxed">ตรวจสอบข้อมูลจากเลขประจำตัวคนต่างด้าว หรือเลขนายจ้าง ได้อย่างรวดเร็ว</p>
        </div>
       </div>
       <div class="self-start md:self-center inline-flex items-center gap-2 rounded-full px-6 py-2 border-2 border-green-500 bg-green-50 whitespace-nowrap">
-       <span class="status-pulse"></span> <span class="status-text font-medium text-green-700">ระบบพร้อมใช้งานเชื่อมต่อข้อมูล</span>
+       <span class="status-pulse"></span> <span class="status-text font-medium text-green-700">System Jeab : Online</span>
       </div>
      </div>
     </div>
@@ -198,7 +198,7 @@
           <h2 class="text-lg font-bold text-gray-800">ค้นหาข้อมูลแรงงานต่างด้าว</h2>
          </div>
         </div>
-        <p class="text-sm text-gray-600 leading-relaxed max-w-2xl mb-6">ระบุเลขประจำตัวคนต่างด้าว 13 หลักเพื่อตรวจสอบประวัติรายบุคคล</p>
+        <p class="text-sm text-gray-600 leading-relaxed max-w-2xl mb-6">ระบุเลขประจำตัวคนต่างด้าวเพื่อตรวจสอบ</p>
         <form id="id-lookup-form" class="space-y-4" novalidate>
          <div>
           <label class="block mb-2 font-medium text-gray-700 text-sm" for="alien-id">เลขประจำตัวคนต่างด้าว (13 หลัก)</label>
@@ -232,7 +232,7 @@
           <h2 class="text-lg font-bold text-gray-800">ค้นหาข้อมูลตามสถานประกอบการ</h2>
          </div>
         </div>
-        <p class="text-sm text-gray-600 leading-relaxed max-w-2xl mb-6">ระบุเลขนายจ้างหรือเลขนิติบุคคลเพื่อดูรายชื่อแรงงานในสังกัด</p>
+        <p class="text-sm text-gray-600 leading-relaxed max-w-2xl mb-6">ระบุเลขนายจ้างหรือเลขนิติบุคคลเพื่อตรวจสอบ</p>
         <form id="employer-lookup-form" class="space-y-4" novalidate>
          <div>
           <label class="block mb-2 font-medium text-gray-700 text-sm" for="employer-number">เลขนิติบุคคล / เลขนายจ้าง</label>
@@ -246,7 +246,7 @@
          </div>
          <div class="flex flex-col gap-3 pt-1">
           <button id="employer-search-button" type="submit" class="focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] disabled:opacity-70 disabled:cursor-not-allowed disabled:translate-y-0 shadow-md hover:shadow-lg bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-            <i data-lucide="search" class="w-5 h-5"></i> <span>ค้นหาข้อมูลสถานประกอบการ</span>
+            <i data-lucide="search" class="w-5 h-5"></i> <span>ค้นหาข้อมูล</span>
           </button>
           <button id="employer-clear-button" type="button" class="focus-ring inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3.5 font-semibold transition-all duration-200 hover:translate-y-[-2px] shadow-sm hover:shadow-md bg-white border border-gray-200 text-gray-700">
             <i data-lucide="rotate-ccw" class="w-5 h-5"></i> <span>ล้างค่า</span>
@@ -274,7 +274,7 @@
         <div class="loader"></div>
         <div>
          <h3 class="font-bold text-gray-800 mb-1">กำลังเรียกดูข้อมูล...</h3>
-         <p class="text-sm text-gray-600 leading-relaxed">ระบบกำลังดึงข้อมูลล่าสุดจาก Google Sheets โปรดรอสักครู่</p>
+         <p class="text-sm text-gray-600 leading-relaxed">ระบบกำลังดึงข้อมูลฐานข้อมูล โปรดรอสักครู่</p>
         </div>
        </div>
        
@@ -301,7 +301,7 @@
        <div id="result-state" class="bounce-in hidden rounded-[24px] overflow-hidden border border-teal-200 bg-white card-shadow w-full">
         <div class="px-5 sm:px-6 py-5 sm:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b-2 border-teal-300 bg-teal-50">
          <div>
-          <h2 class="font-bold text-teal-800 text-lg">ผลการตรวจสอบข้อมูลสุทธิ</h2>
+          <h2 class="font-bold text-teal-800 text-lg">ผลการตรวจสอบข้อมูล</h2>
          </div>
          <div class="inline-flex items-center gap-2 rounded-full px-3 py-1.5 self-start sm:self-center border border-teal-300 bg-white shadow-sm">
           <span class="w-2 h-2 rounded-full bg-teal-600"></span> <span class="text-sm font-medium text-teal-700">ดึงข้อมูลสำเร็จ</span>
