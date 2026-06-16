@@ -268,7 +268,7 @@
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> <span>ตรวจสอบสำเร็จ</span>
          </div>
         </div>
-        <div id="result-fields" class="px-5 py-1 bg-white w-full divide-y divide-slate-100"></div>
+        <div id="result-fields" class="px-0 py-0 bg-white w-full flex flex-col"></div>
         <div id="employer-result-table" class="hidden p-0 bg-white table-container overflow-x-auto w-full"></div>
        </div>
       </section>
@@ -285,7 +285,7 @@
   </div>
 
   <template id="result-row-template">
-   <div data-template-id="result-row" class="result-row grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-1 sm:gap-4 py-3 border-b border-slate-100 transition-colors hover:bg-slate-50/50">
+   <div data-template-id="result-row" class="result-row grid grid-cols-1 sm:grid-cols-[200px_1fr] gap-1 sm:gap-4 py-3 px-5 border-b border-slate-100 transition-colors hover:bg-slate-50/50">
     <div data-template-id="result-label" class="text-xs font-semibold text-slate-500"></div>
     <div data-template-id="result-value" class="text-xs font-medium text-slate-900 break-words"></div>
    </div>
@@ -459,35 +459,58 @@
       }
     }
 
-    function renderResult(headers, row) {
+    function renderResult(headers, rows) {
       clearResults();
       resultFields.classList.remove('hidden');
 
-      headers.forEach((header, index) => {
-        const template = document.getElementById('result-row-template');
-        const clone = template.content.cloneNode(true);
-        const label = clone.querySelector('[data-template-id="result-label"]');
-        const value = clone.querySelector('[data-template-id="result-value"]');
-        const rowDiv = clone.querySelector('[data-template-id="result-row"]');
-
-        const labelText = header && header.trim() ? header.trim() : `ข้อมูล ${index + 1}`;
-        let valueText = row[index] && row[index].trim() ? row[index].trim() : '-';
-
-        if (labelText.toLowerCase().includes('date') || labelText.toLowerCase().includes('วันที่') || labelText.toLowerCase().includes('เวลา')) {
-          valueText = formatThaiDate(valueText);
+      rows.forEach((row, rowIndex) => {
+        
+        if (rows.length > 1) {
+          const recordHeader = document.createElement('div');
+          recordHeader.className = 'bg-blue-50/50 px-5 py-2.5 border-b border-slate-100 flex items-center justify-between';
+          recordHeader.innerHTML = `
+            <span class="text-xs font-bold text-blue-800 tracking-wide">
+              <i data-lucide="history" class="w-3.5 h-3.5 inline-block mr-1 align-text-bottom"></i> 
+              ระเบียนข้อมูลที่ ${rowIndex + 1}
+            </span>
+          `;
+          resultFields.appendChild(recordHeader);
         }
 
-        label.textContent = labelText;
-        value.textContent = valueText;
-        rowDiv.style.animationDelay = `${index * 0.03}s`;
+        headers.forEach((header, index) => {
+          const template = document.getElementById('result-row-template');
+          const clone = template.content.cloneNode(true);
+          const label = clone.querySelector('[data-template-id="result-label"]');
+          const value = clone.querySelector('[data-template-id="result-value"]');
+          const rowDiv = clone.querySelector('[data-template-id="result-row"]');
 
-        if (labelText.toLowerCase().includes('ผลการดำเนินการ') || labelText.toLowerCase().includes('result') || labelText.toLowerCase().includes('status') || labelText.includes('สถานะ')) {
-          rowDiv.classList.add('bg-slate-50/70', 'px-3');
-          value.classList.add('font-bold', 'text-blue-900');
+          const labelText = header && header.trim() ? header.trim() : `ข้อมูล ${index + 1}`;
+          let valueText = row[index] && row[index].trim() ? row[index].trim() : '-';
+
+          if (labelText.toLowerCase().includes('date') || labelText.toLowerCase().includes('วันที่') || labelText.toLowerCase().includes('เวลา')) {
+            valueText = formatThaiDate(valueText);
+          }
+
+          label.textContent = labelText;
+          value.textContent = valueText;
+          rowDiv.style.animationDelay = `${index * 0.02}s`;
+
+          if (labelText.toLowerCase().includes('ผลการดำเนินการ') || labelText.toLowerCase().includes('result') || labelText.toLowerCase().includes('status') || labelText.includes('สถานะ')) {
+            rowDiv.classList.add('bg-slate-50/70');
+            value.classList.add('font-bold', 'text-blue-900');
+          }
+
+          resultFields.appendChild(clone);
+        });
+
+        if (rowIndex < rows.length - 1) {
+          const divider = document.createElement('div');
+          divider.className = 'h-2 bg-slate-100 border-y border-slate-200 w-full';
+          resultFields.appendChild(divider);
         }
-
-        resultFields.appendChild(clone);
       });
+      
+      lucide.createIcons();
     }
 
     function renderEmployerResultTable(headers, rows) {
@@ -560,14 +583,15 @@
 
         const headers = rows[0];
         const records = rows.slice(1);
-        const matched = records.find(row => normalizeId(row[4]) === idNumber);
+        
+        const matchedRecords = records.filter(row => normalizeId(row[4]) === idNumber);
 
-        if (!matched) {
+        if (!matchedRecords.length) {
           showState('notFound');
           return;
         }
 
-        renderResult(headers, matched);
+        renderResult(headers, matchedRecords);
         showState('result');
       } catch {
         showState('error');
@@ -644,7 +668,6 @@
       }
       const employerNumber = normalizeId(employerInput.value);
       if (employerNumber.length !== 13) {
-        // Correct professional alert text
         employerInputError.textContent = 'กรุณากรอกเลขทะเบียนนิติบุคคลหรือเลขนายจ้างให้ครบ 13 หลัก';
         employerInputError.classList.remove('hidden');
         employerInput.focus();
